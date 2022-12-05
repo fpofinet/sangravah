@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Categorie{% endblock %}
+
+{% block body %}
+<section class="row">
+    <div class="col-lg-8 col mt-5 mx-auto">
+        <div class="container mt-5">
+            <div class="container-fluid p-1">
+                <a href={{path("new_categorie")}} class="btn btn-outline-dark">Ajouter</a>
+                <p class="h3 text-center mb-3">Liste des categories</p>
+            </div>
+            <div class="container-fluid p-1">
+                <table class="table table-striped table-responsive">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>N°</th>
+                        <th>CODE</th>
+                        <th>LIBELLE</th>
+                        <th>TYPE</th>
+                        <th>SEXE</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cat in categories %}
+                        <tr>
+                            <td>1</td>
+                            <td>{{cat.code}}</td>
+                            <td>{{cat.libelle}}</td>
+                            <td>{{cat.type}}</td>
+                            <td>{{cat.sexe}}</td>
+                            <td><a href={{path("update_categorie",{'id':cat.id})}} class="btn btn-outline-success">Modifier</a></td>
+                            <td><a href={{path("delete_categorie",{'id':cat.id})}} class="btn btn-outline-danger">Supprimer</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
