@@ -6,7 +6,7 @@
 {% block body %}
 <section class="container mt-5">
     <div class="row">
-        <div class="col-lg-6 mt-5 mx-auto border px-0 pb-3">
+        <div class="col-lg-7 mt-5 mx-auto border px-0 pb-3">
             <div class="container-fluid bg-dark text-center text-light py-2" style="height:50px">
                 <p class="h3">
                     {% if editState %}
@@ -19,8 +19,29 @@
             <div class="container-fluid">
                 {{form_start(form)}}
                 {{form_widget(form)}}
+                    {% if editState %}
+                        <div class="d-flex flex-row mb-3 container">
+                        {% for image in produit.images %}
+                            <div class="mx-2">
+                                <img class="" src="{{ asset('/uploads/' ~ image.nom) }}" alt="Image" >
+                                <a class="btn btn-outline-danger my-2" href="{{ path('annonces_delete_image', {id: image.id}) }}" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Supprimer</a>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
                     <button class="btn btn-outline-dark">
                         {% if editState %}
                             Modifier
                         {% else %}
+                            Ajouter
+                        {% endif %}
+                    </button>
+                {{form_end(form)}}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/images.js') }}"></script>
 {% endblock %}
