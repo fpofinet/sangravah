@@ -18,6 +18,7 @@
                         <th>CATEGORIE</th>  
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,6 +31,7 @@
                             <td>{{produit.prix}}</td>
                             <td>{{produit.quantite}}</td>
                             <td>{{produit.categorie.libelle}}</td>
+                            <td><a href={{path("details",{'id':produit.id})}} class="btn btn-outline-dark">details</a></td>
                             <td><a href={{path("update_produit",{'id':produit.id})}} class="btn btn-outline-success">Modifier</a></td>
                             <td><a href={{path("delete_produit",{'id':produit.id})}} class="btn btn-outline-danger">Supprimer</a></td>
                         </tr>

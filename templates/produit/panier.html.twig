@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier {% endblock %}
+
+{% block body %}
+<section class="container mt-5 pt-5">
+    <div class="row mt-4">  
+        {% for item in commande.items %}
+        <!--item-->
+        <div class="col-lg-7 col-md-8 col-10 mx-auto border-3 m-4 bg-secondary d-flex flex-sm-row flex-column p-0 my-1">
+            
+            <p class="px-4 py-2">
+                {{item.produit.designation}}  </br>
+                Prix unitaire : {{item.produit.prix}} FCFA </br>
+              
+                 Quantite : {{item.quantite}} FCFA </br>
+                 <a class="btn btn-outline-danger" href={{path("crm",{id: item.id})}}> retirer</a>
+            </p>     
+            
+        </div>
+        {% endfor %}
+        <div class="col-lg-7 col-md-8 col-10 mx-auto border-3 m-4 p-0 my-1">
+            <p>
+                prix Total de la commande : 350.000 FCFA <br>
+            </p>
+            <a class="btn btn-primary" href="#">Commander</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

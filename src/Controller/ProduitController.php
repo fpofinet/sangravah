@@ -3,13 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Entity\Items;
 use App\Entity\Produit;
+use App\Entity\Commande;
 use App\Form\ProduitType;
+use App\Form\CommandeType;
+use App\Service\CartService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProduitController extends AbstractController
@@ -24,7 +29,31 @@ class ProduitController extends AbstractController
             'produits' => $produits,
         ]);
     }
-
+    /**
+     * @Route("/produit/{id}",name="details")
+     */
+    public function details(Produit $produit,Request $request,CartService $cartService):Response
+    {
+        if(!$produit){
+            return $this->redirectToRoute("app_produit");
+        }
+        $form=$this->createForm(CommandeType::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            //dd($form->get("quantite")->getData());
+           // dd($produit);
+            $item = new Items();
+            $item->setProduit($produit);
+            $item->setQuantite($form->get("quantite")->getData());
+           // dd("break");
+            $cartService->addItem($item);
+            return $this->redirectToRoute("app_produit");
+        }
+        return $this->renderForm("produit/details.html.twig",[
+            'form'=>$form,
+            'produit'=>$produit
+        ]);
+    }
     /**
      * @Route("/produit/new",name="new_produit")
      * @Route("/produit/{id}/update",name="update_produit")
@@ -78,7 +107,7 @@ class ProduitController extends AbstractController
      /**
      * @Route("/produit/{id}/delete",name="delete_produit")
      */
-    public function deteleCategorie(Produit $produit,ManagerRegistry $doctrine):Response
+    public function deteleProduit(Produit $produit,ManagerRegistry $doctrine):Response
     {
         if($produit){
             $doctrine->getManager()->remove($produit);
@@ -111,4 +140,26 @@ class ProduitController extends AbstractController
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
     }
+    /**
+     * @Route("/cart/produit",name="cart")
+     */
+    public function addToCart(CartService $cartService)
+    {
+        $commande=new Commande();
+        $commande=$cartService->getCart();
+        
+        return $this->render('produit/panier.html.twig', [
+            'commande' => $commande,
+        ]);
+    }
+    /**
+     *@Route("/cart/remove/{id}/",name="crm")
+     */
+    public function removeFromCart(Items $item=null,CartService $cartService){
+        $cartService->removeItem($item);
+
+        return $this->redirectToRoute("cart");
+
+    }
+
 }
