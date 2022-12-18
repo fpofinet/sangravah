@@ -4,7 +4,6 @@ namespace App\Service;
 
 use App\Entity\Items;
 use App\Entity\Commande;
-use PHPUnit\TextUI\Command;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartService{
@@ -19,7 +18,6 @@ class CartService{
     public function addItem(Items $item){
         
         $session=$this->requestStack->getSession();
-        //dd($item);
         if($session->get('cart')!=null){
             $this->commande=$session->get('cart');
             $this->commande->addItem($item);
@@ -28,9 +26,6 @@ class CartService{
             $this->commande->addItem($item);
             $session->set('cart',$this->commande);
         }
-       //
-       //dd($session->get('cart'));
-        //$session->set('cart',$orderList);
     }
 
     public function removeItem(Items $item){
@@ -42,9 +37,12 @@ class CartService{
         
         $session->set('cart',$comm);
     }
-    public function getCart():Commande{
+
+    public function getCart():?Commande{
         $session=$this->requestStack->getSession();
         $this->commande=$session->get('cart');
         return $this->commande;
     }
+
+
 }

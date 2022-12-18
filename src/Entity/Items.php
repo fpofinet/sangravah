@@ -18,7 +18,7 @@ class Items
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Produit::class, inversedBy="items")
+     * @ORM\ManyToOne(targetEntity=Produit::class, inversedBy="items",cascade={"merge"}))
      * @ORM\JoinColumn(nullable=false)
      */
     private $produit;
@@ -73,5 +73,9 @@ class Items
         $this->commande = $commande;
 
         return $this;
+    }
+    public function equals(Items $item): bool
+    {
+        return $this->getProduit()->getId() === $item->getProduit()->getId();
     }
 }

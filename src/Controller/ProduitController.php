@@ -8,8 +8,10 @@ use App\Entity\Produit;
 use App\Entity\Commande;
 use App\Form\ProduitType;
 use App\Form\CommandeType;
+use App\Repository\CommandeRepository;
 use App\Service\CartService;
 use Doctrine\Persistence\ManagerRegistry;
+use PHPUnit\TextUI\Command;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,31 +31,7 @@ class ProduitController extends AbstractController
             'produits' => $produits,
         ]);
     }
-    /**
-     * @Route("/produit/{id}",name="details")
-     */
-    public function details(Produit $produit,Request $request,CartService $cartService):Response
-    {
-        if(!$produit){
-            return $this->redirectToRoute("app_produit");
-        }
-        $form=$this->createForm(CommandeType::class);
-        $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
-            //dd($form->get("quantite")->getData());
-           // dd($produit);
-            $item = new Items();
-            $item->setProduit($produit);
-            $item->setQuantite($form->get("quantite")->getData());
-           // dd("break");
-            $cartService->addItem($item);
-            return $this->redirectToRoute("app_produit");
-        }
-        return $this->renderForm("produit/details.html.twig",[
-            'form'=>$form,
-            'produit'=>$produit
-        ]);
-    }
+    
     /**
      * @Route("/produit/new",name="new_produit")
      * @Route("/produit/{id}/update",name="update_produit")
@@ -103,7 +81,30 @@ class ProduitController extends AbstractController
             'editState' => $produit->getId() !==null
         ]);
     }
-
+    /**
+     * @Route("/produit/{id}",name="details")
+     */
+    public function details(Produit $produit,Request $request,CartService $cartService):Response
+    {
+        if(!$produit){
+            return $this->redirectToRoute("app_produit");
+        }
+        $form=$this->createForm(CommandeType::class);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+           
+            $item = new Items();
+            $item->setProduit($produit);
+            $item->setQuantite($form->get("quantite")->getData());
+           // dd("break");
+            $cartService->addItem($item);
+            return $this->redirectToRoute("app_produit");
+        }
+        return $this->renderForm("produit/details.html.twig",[
+            'form'=>$form,
+            'produit'=>$produit
+        ]);
+    }
      /**
      * @Route("/produit/{id}/delete",name="delete_produit")
      */
@@ -153,7 +154,7 @@ class ProduitController extends AbstractController
         ]);
     }
     /**
-     *@Route("/cart/remove/{id}/",name="crm")
+     *@Route("/cart/remove/",name="crm")
      */
     public function removeFromCart(Items $item=null,CartService $cartService){
         $cartService->removeItem($item);
@@ -162,4 +163,28 @@ class ProduitController extends AbstractController
 
     }
 
+    /**
+     * @Route("/cart/save",name="saveCart")
+     */
+    public function saveCart(ManagerRegistry $doctrine,CartService $cartService):Response
+    {
+        $commande = new Commande();
+        $commande->setCreatedAt(new  \DateTimeImmutable);
+        $doctrine->getManager()->persist($commande);
+        $doctrine->getManager()->flush();
+
+        $repo= new CommandeRepository($doctrine);
+        $shopList=$cartService->getCart();
+        
+        foreach($shopList->getItems() as $pds){
+            $item= new Items();
+            $commande = $repo->findLast();
+            $item->setCommande($commande);
+            $item->setProduit($doctrine->getRepository(Produit::class)->findOneBy(["id"=>$pds->getProduit()->getId()]));
+            $item->setQuantite($pds->getQuantite());
+            $doctrine->getManager()->persist($item);
+            $doctrine->getManager()->flush();
+        }
+        return $this->redirectToRoute("cart");
+    }
 }

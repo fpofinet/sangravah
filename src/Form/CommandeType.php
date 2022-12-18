@@ -14,6 +14,8 @@ class CommandeType extends AbstractType
         $builder
             ->add('quantite',IntegerType::class,[
                 'mapped' => false,
+                'label' => false,
+                'data' => 1,
             ])
         ;
     }

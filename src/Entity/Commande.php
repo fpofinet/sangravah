@@ -20,7 +20,7 @@ class Commande
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=Items::class, mappedBy="commande")
+     * @ORM\OneToMany(targetEntity=Items::class, mappedBy="commande",cascade={"persist"})
      */
     private $items;
 
@@ -47,12 +47,30 @@ class Commande
         return $this->items;
     }
 
-    public function addItem(Items $item): self
+    /*public function addItem(Items $item): self
     {
         if (!$this->items->contains($item)) {
             $this->items[] = $item;
             $item->setCommande($this);
         }
+
+        return $this;
+    }*/
+    public function addItem(Items $item): self
+    {
+        foreach ($this->getItems() as $existingItem) {
+            // The item already exists, update the quantity
+            if ($existingItem->equals($item)) {
+                $existingItem->setQuantite(
+                    $existingItem->getQuantite() + $item->getQuantite()
+                );
+
+                return $this;
+            }
+        }
+
+        $this->items[] = $item;
+        //$item->setCommande($this);
 
         return $this;
     }
