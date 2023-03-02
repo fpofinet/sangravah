@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commandes en cours{% endblock %}
+{% block body %}
+<section class="container mt-5 pt-5">
+    <div class="container">
+        <p class="h3 fw-bold text-center mb-3">COMMANDES EN COURS DE TRAITEMENT</p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>IDCOMMANDE</th>
+                    <th>NOMBRE PRODUIT</th>
+                    <th>QUANTITE</th>
+                    <th>MONTANT</th>
+                    <th>DATE COMM</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for commande in commandes %}
+                <tr>
+                    <td>{{commande.id}}</td> 
+                    <td>{{commande.items | length}}</td>
+                    <td>{{commande.totalQte}}</td>
+                    <td>{{commande.totalPrix}} FCFA</td>
+                    <td>{{commande.createdAt|date('d/m/Y')}}</td>
+                    <td><a href="#" class="btn btn-outline-dark">Voir plus</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

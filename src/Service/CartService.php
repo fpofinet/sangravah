@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\Items;
 use App\Entity\Commande;
+use Doctrine\ORM\Query\Expr\Func;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CartService{
@@ -44,5 +45,9 @@ class CartService{
         return $this->commande;
     }
 
+    public function clearCart(){
+        $session=$this->requestStack->getSession();
+        $session->set('cart',null);
+    }
 
 }

@@ -34,7 +34,7 @@ class ProduitController extends AbstractController
     
     /**
      * @Route("/produit/new",name="new_produit")
-     * @Route("/produit/{id}/update",name="update_produit")
+     * @Route("/admin/produit/{id}/update",name="update_produit")
      */
     public function addProduit(Produit $produit=null,Request $request,ManagerRegistry $doctrine):Response
     {
@@ -46,23 +46,15 @@ class ProduitController extends AbstractController
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
             $images = $form->get('images')->getData();
-            //dd($images);
-            // On boucle sur les images
             foreach($images as $image){
-                // On génère un nouveau nom de fichier
                 $fichier = md5(uniqid()) . '.' . $image->guessExtension();
-
-                // On copie le fichier dans le dossier uploads
                 $image->move(
                     $this->getParameter('images_directory'),
                     $fichier
                 );
-
-                // On stocke l'image dans la base de données (son nom)
                 $img = new Image;
                 $img->setNom($fichier);
                 $img->setChemin($produit->getCategorie()->getLibelle());
-                
                 $produit->addImage($img);
             }
 
@@ -82,6 +74,7 @@ class ProduitController extends AbstractController
         ]);
     }
     /**
+     * @Route("/admin/produit/{id}/details",name="admin_details")
      * @Route("/produit/{id}",name="details")
      */
     public function details(Produit $produit,Request $request,CartService $cartService):Response
@@ -92,11 +85,9 @@ class ProduitController extends AbstractController
         $form=$this->createForm(CommandeType::class);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-           
             $item = new Items();
             $item->setProduit($produit);
             $item->setQuantite($form->get("quantite")->getData());
-           // dd("break");
             $cartService->addItem($item);
             return $this->redirectToRoute("app_produit");
         }
@@ -113,7 +104,6 @@ class ProduitController extends AbstractController
         if($produit){
             $doctrine->getManager()->remove($produit);
             $doctrine->getManager()->flush();
-
             return $this->redirectToRoute("app_produit");
         }
         return $this->redirectToRoute("app_produit");
@@ -144,23 +134,20 @@ class ProduitController extends AbstractController
     /**
      * @Route("/cart/produit",name="cart")
      */
-    public function addToCart(CartService $cartService)
+    public function showCart(CartService $cartService)
     {
         $commande=new Commande();
         $commande=$cartService->getCart();
-        
         return $this->render('produit/panier.html.twig', [
             'commande' => $commande,
         ]);
     }
     /**
-     *@Route("/cart/remove/",name="crm")
+     *@Route("/cart/{id}/remove",name="remove")
      */
-    public function removeFromCart(Items $item=null,CartService $cartService){
-        $cartService->removeItem($item);
-
+    public function removeFromCart($id,CartService $cartService){
+        $cartService->removeItem($id);
         return $this->redirectToRoute("cart");
-
     }
 
     /**
@@ -170,21 +157,44 @@ class ProduitController extends AbstractController
     {
         $commande = new Commande();
         $commande->setCreatedAt(new  \DateTimeImmutable);
+        $commande->setStatut(1);
+        $commande->setTotalQte(0);
+        $commande->setTotalPrix(0);
         $doctrine->getManager()->persist($commande);
         $doctrine->getManager()->flush();
 
         $repo= new CommandeRepository($doctrine);
         $shopList=$cartService->getCart();
-        
-        foreach($shopList->getItems() as $pds){
+        $totalPrix=0;
+        $totalQte=0;
+        foreach($shopList->getItems() as $elt){
             $item= new Items();
+            
             $commande = $repo->findLast();
             $item->setCommande($commande);
-            $item->setProduit($doctrine->getRepository(Produit::class)->findOneBy(["id"=>$pds->getProduit()->getId()]));
-            $item->setQuantite($pds->getQuantite());
+            $item->setProduit($doctrine->getRepository(Produit::class)->findOneBy(["id"=>$elt->getProduit()->getId()]));
+            $item->setQuantite($elt->getQuantite());
+            $totalQte =  $totalQte+ $elt->getQuantite();
+            $totalPrix = $totalPrix + ($elt->getQuantite()*$item->getProduit()->getPrix());
             $doctrine->getManager()->persist($item);
             $doctrine->getManager()->flush();
         }
+        $commande->setTotalQte($totalQte);
+        $commande->setTotalPrix($totalPrix);
+        $doctrine->getManager()->persist($commande);
+        $doctrine->getManager()->flush();
+
+        return $this->redirectToRoute("cart");
+    }
+
+     /**
+     * @Route("/cart/annuler",name="delCart")
+     */
+    public function annuler(CartService $cartService):Response
+    {
+        
+        $cartService->clearCart();
+    
         return $this->redirectToRoute("cart");
     }
 }

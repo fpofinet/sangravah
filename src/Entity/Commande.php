@@ -29,6 +29,21 @@ class Commande
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $statut;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $totalQte;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $totalPrix;
+
     public function __construct()
     {
         $this->items = new ArrayCollection();
@@ -98,4 +113,42 @@ class Commande
 
         return $this;
     }
+
+    public function getStatut(): ?int
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(int $statut): self
+    {
+        $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getTotalQte(): ?int
+    {
+        return $this->totalQte;
+    }
+
+    public function setTotalQte(int $totalQte): self
+    {
+        $this->totalQte = $totalQte;
+
+        return $this;
+    }
+
+    public function getTotalPrix(): ?int
+    {
+        return $this->totalPrix;
+    }
+
+    public function setTotalPrix(int $totalPrix): self
+    {
+        $this->totalPrix = $totalPrix;
+
+        return $this;
+    }
+
+    //public func
 }

@@ -25,7 +25,7 @@ class ProduitType extends AbstractType
                 'choice_label'=>'libelle'
             ])
             ->add('images', FileType::class, [
-                'label' => false,
+                'label' => "images",
                 'multiple' => true,
                 'mapped' => false,
                 'required' => false

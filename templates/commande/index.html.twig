@@ -1,20 +1,43 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CommandeController!{% endblock %}
-
+{% block title %}Commandes en cours{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/wamp64/www/sangravah/src/Controller/CommandeController.php'|file_link(0) }}">src/Controller/CommandeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/wamp64/www/sangravah/templates/commande/index.html.twig'|file_link(0) }}">templates/commande/index.html.twig</a></code></li>
-    </ul>
-</div>
+<section class="container mt-5 pt-5">
+    <div class="container">
+        <p class="h3 fw-bold text-center mb-3">COMMANDES</p>
+        <div class="container border p-3 rounded shadow">
+            <table class="table table-striped" id="myTable">
+                <thead>
+                    <tr>
+                        <th>IDCOMMANDE</th>
+                        <th>NOMBRE PRODUIT</th>
+                        <th>QUANTITE</th>
+                        <th>MONTANT</th>
+                        <th>DATE COMM</th>
+                        <th>STATUS</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for commande in commandes %}
+                    <tr>
+                        <td>{{commande.id}}</td> 
+                        <td>{{commande.items | length}}</td>
+                        <td>{{commande.totalQte}}</td>
+                        <td>{{commande.totalPrix}} FCFA</td>
+                        <td>{{commande.createdAt|date('d/m/Y')}}</td>
+                        <td>{{commande.statut}}</td>
+                        <td><a href="#" class="btn btn-outline-dark">Voir plus</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<script>
+    let table = new DataTable('#myTable', {
+    // config options...
+});
+</script>
 {% endblock %}
