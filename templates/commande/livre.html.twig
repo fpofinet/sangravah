@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Commandes en cours{% endblock %}
+{% block title %}Commandes livrés{% endblock %}
 {% block body %}
 <section class="container mt-5 pt-5">
     <div class="container">
-        <p class="h3 fw-bold text-center mb-3">COMMANDES</p>
+        <p class="h3 fw-bold text-center mb-3">COMMANDES Livrées</p>
         <div class="container border p-3 rounded shadow">
             <table class="table table-striped" id="myTable">
                 <thead>
@@ -14,7 +14,6 @@
                         <th>QUANTITE</th>
                         <th>MONTANT</th>
                         <th>DATE COMM</th>
-                        <th>STATUS</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -26,13 +25,6 @@
                         <td>{{commande.totalQte}}</td>
                         <td>{{commande.totalPrix}} FCFA</td>
                         <td>{{commande.createdAt|date('d/m/Y')}}</td>
-                        {% if commande.statut== 2 %}
-                        <td class="bg-success">{{commande.statut}}</td>
-                        {% elseif commande.statut== 0 %}
-                        <td class="bg-danger">{{commande.statut}}</td>
-                        {% else %}
-                        <td>{{commande.statut}}</td>
-                        {% endif %}
                         <td><a href="{{path("details_commande",{'id':commande.id})}}" class="btn btn-outline-dark">Voir plus</a></td>
                     </tr>
                     {% endfor %}

@@ -16,10 +16,14 @@ class CartService{
         $this->commande= new Commande();
     }
 
-    public function addItem(Items $item){
+    public function addProduit(Items $item){
         
         $session=$this->requestStack->getSession();
         if($session->get('cart')!=null){
+            //$commande = new Commande();
+            //$commande->setStatut(1);
+            //$commande->setCreatedAt(new  \DateTimeImmutable);
+            
             $this->commande=$session->get('cart');
             $this->commande->addItem($item);
 
@@ -29,13 +33,16 @@ class CartService{
         }
     }
 
-    public function removeItem(Items $item){
+    public function removeProduit($ref){
         $comm= new Commande();
 
         $session=$this->requestStack->getSession();
         $comm=$session->get('cart');
-        $comm->removeItem($item);
-        
+        foreach($comm->getItems() as $item){
+            if($item->getProduit()->getReference() == $ref){
+                $comm->removeItem($item);
+            }
+        }    
         $session->set('cart',$comm);
     }
 

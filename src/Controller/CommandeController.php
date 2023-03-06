@@ -21,6 +21,58 @@ class CommandeController extends AbstractController
         ]);
     }
 
+
+    /**
+     * @Route("/admin/commande-livre", name="commande_livre")
+     */
+    public function returnLivre(ManagerRegistry $doctrine):Response
+    {
+        $commandes= $doctrine->getRepository(Commande::class)->findBy(["statut"=> 2]);
+        return $this->render('commande/livre.html.twig', [
+            'commandes' => $commandes
+        ]);
+    }
+
+    /**
+     * @Route("/admin/commande/{id}", name="details_commande")
+     */
+    public function details(Commande $commande){
+        if(!$commande){
+            return $this->redirectToRoute("app_commande");
+        }
+        return $this->render('commande/details.html.twig', [
+            'commande' => $commande
+        ]);
+    }
+
+    /**
+     * @Route("/admin/commande/{id}/cloturer", name="cloturer")
+     */
+    public function cloturer(Commande $commande,ManagerRegistry $doctrine){
+        if($commande!=null){
+            $commande->setStatut(2);
+            $doctrine->getManager()->persist($commande);
+            $doctrine->getManager()->flush();
+            return $this->redirectToRoute("app_commande");
+        } else{
+            return $this->redirectToRoute("app_commande");
+        }
+    }
+
+    /**
+     * @Route("/admin/commande/{id}/annuler", name="annuler")
+     */
+    public function annuler(Commande $commande,ManagerRegistry $doctrine){
+        if($commande!=null){
+            $commande->setStatut(0);
+            $doctrine->getManager()->persist($commande);
+            $doctrine->getManager()->flush();
+            return $this->redirectToRoute("app_commande");
+        } else{
+            return $this->redirectToRoute("app_commande");
+        }
+    }
+
     /**
      * @Route("/admin/commande/encours", name="commande_live")
      */
@@ -32,16 +84,7 @@ class CommandeController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/commande/livre", name="commande_livre")
-     */
-    public function returnLivre(ManagerRegistry $doctrine):Response
-    {
-        $commandes= $doctrine->getRepository(Commande::class)->findBy(["statut"=> 2]);
-        return $this->render('admin/livre.html.twig', [
-            'commandes' => $commandes
-        ]);
-    }
+    
 
 
 

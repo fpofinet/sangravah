@@ -88,7 +88,7 @@ class ProduitController extends AbstractController
             $item = new Items();
             $item->setProduit($produit);
             $item->setQuantite($form->get("quantite")->getData());
-            $cartService->addItem($item);
+            $cartService->addProduit($item);
             return $this->redirectToRoute("app_produit");
         }
         return $this->renderForm("produit/details.html.twig",[
@@ -131,6 +131,7 @@ class ProduitController extends AbstractController
             return new JsonResponse(['error' => 'Token Invalide'], 400);
         }
     }
+
     /**
      * @Route("/cart/produit",name="cart")
      */
@@ -142,11 +143,12 @@ class ProduitController extends AbstractController
             'commande' => $commande,
         ]);
     }
+
     /**
-     *@Route("/cart/{id}/remove",name="remove")
+     *@Route("/cart/remove/{ref}",name="remove")
      */
-    public function removeFromCart($id,CartService $cartService){
-        $cartService->removeItem($id);
+    public function remove($ref,CartService $cartService){
+        $cartService->removeProduit($ref);
         return $this->redirectToRoute("cart");
     }
 

@@ -1,36 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Panier {% endblock %}
-
+{% block title %}Détails commande{% endblock %}
 {% block body %}
 <section class="container mt-5 pt-5">
     <div class="row mt-4">  
         <div class="col-lg-7 col-md-8 col-10 mx-auto border-3 m-4  p-0 my-1 card mb-5">
             <div class="card-header text-center bg-dark text-light">
                 <span class="h3">
-                    listes de course
+                    Details commande N° {{commande.id}}
                 </span>
             </div>
             <div class="card-body p-0">
-                {% if app.session.get('cart') %}
-                    {%  set cart= app.session.get('cart') %}
-                    {% for item in cart.items %}
-                        <!--item-->
+                    {% for item in commande.items %}
                         <div class="border mb-2">
                             <p class="px-4 py-2">
                                 {{item.produit.designation}} </br>
                                 Prix unitaire : {{item.produit.prix}} FCFA </br>
                                 Quantite : {{item.quantite}} </br>
-                                
-                                <a href="{{path("remove",{'ref':item.produit.reference})}}" class="btn btn-outline-danger mt-2 mb-0">retirer</a>
                             </p>
                         </div>
                     {% endfor %}    
-                {% endif %}
             </div>
             <div class="card-footer">
-                <a href="{{path("delCart")}}" class="btn btn-danger">Annuler</a>
-                <a href="{{path("saveCart")}}" class="btn btn-success">Commander</a>
+                <a href="{{path("cloturer",{'id': commande.id})}}" class="btn btn-success">Cloturer</a>
+                <a href="{{path("annuler",{'id': commande.id})}}" class="btn btn-danger">Annuler</a>
             </div>    
         </div>
     </div>

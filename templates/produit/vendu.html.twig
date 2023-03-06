@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commandes livrés{% endblock %}
+{% block body %}
+<section class="container mt-5 pt-5">
+    <div class="container">
+        <div class="container  border p-0 rounded  shadow mt-3 mb-5">
+            <p class="h2 fw-bold text-center text-light mb-2 bg-dark rounded-top">Liste des produits Vendus</p>
+            <div class="p-3">
+                <table class="table table-striped" id="myTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>REFERENCES</th>
+                            <th>DESIGNATION</th>
+                            <th>QUANTITE</th>
+                            <th>PRIX UNITAIRE</th>
+                            <th>CATEGORIE</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in produits %}
+                        <tr>
+                            <td>{{produit.id}}</td> 
+                            <td>{{produit.reference}}</td>
+                            <td>{{produit.designation}}</td>
+                            <td>{{produit.quantite}} </td>
+                            <td>{{produit.prix}} FCFA</td>
+                            <td>{{produit.categorie.libelle}}</td>
+                            <td><a href="{{path("admin_details",{'id': produit.id})}}" class="btn btn-outline-dark">Voir plus</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+    let table = new DataTable('#myTable', {
+    // config options...
+});
+</script>
+{% endblock %}

@@ -39,20 +39,37 @@ class ItemsRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Items[] Returns an array of Items objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function CountProduits() :int
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT COUNT(DISTINCT produit_id) FROM items;
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+       
+        
+        return $resultSet->fetchOne();
+    }
+    
+
+    /**
+     * @return Items[] Returns an array of Items objects
+     */
+    public function findByDistinctByProduit(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+            SELECT DISTINCT produit_id FROM items;
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+       
+        
+        return $resultSet->fetchAllAssociative();
+    }
 
 //    public function findOneBySomeField($value): ?Items
 //    {
